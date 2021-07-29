@@ -12,13 +12,42 @@ class Horloge extends React.Component{
 		statut : "Matinee",
 		jourMois : 19
 	}
-	funcDate = () =>{
-		let date = new Date();
-		this.setState({
-			heure : date.getHours(),
-			minute : date.getMinutes(),
-			seconde : date.getSeconds(),
+	funcStatut = (heure) =>{
+		if(heure <= 12){
+			return "Matinee"
+		}
+		else{
+			return "Soiree";
+		}
+	}
+	funcMois = (mois) =>{
+		let moisAnnee = ["Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre"];
+		return moisAnnee[mois];
+	}
+	funcJour = (jour) => {
+		let jourSemaine = ["Lundi", "Mardi", "Mercredi", "Jeudi", "VEndredi", "Samedi", "Dimache"];
+		return jourSemaine[jour];
+	}
+
+	setMinute = (e) =>{
+		this.setState ({
+			minute : this.state.minute + e.target.value
 		})
+	}
+
+	componentDidMount(){
+		this.timer = window.setInterval(() => {
+			const time = new Date()
+			this.setState({
+				heure : time.getHours(),
+				minute : time.getMinutes(),
+				seconde : time.getSeconds(),
+			})
+		})
+	}
+
+	componentWillUnmount(){
+		clearInterval(this.timer)
 	}
 	render() {
 		return (
@@ -71,7 +100,7 @@ class Horloge extends React.Component{
 						</div>
 						<div className="row">
 							<div className="col-md-12">
-								<input type="number" className="form-control" placeholder="Entrez la nouvelle minute que vous souhaitez"/>
+								<input type="number" className="form-control" placeholder="Entrez la nouvelle minute que vous souhaitez" onChange = {this.setMinute} value = {this.state.minute}/>
 							</div>
 						</div>
 					</div>
