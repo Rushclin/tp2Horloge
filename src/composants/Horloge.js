@@ -3,38 +3,43 @@ import './../css/bootstrap.min.css';
 
 class Horloge extends React.Component{
 	state = {
-		heure : 12,
-		minute : 12,
-		seconde : 12,
+		heure : '01',
+		minute : '00',
+		seconde : '00',
+		jourSemaine : "Lundi",
 		mois : "Janvier",
 		annee : 2020,
-		jour : "Lundi",
-		statut : "Matinee",
-		jourMois : 19
+		statut : "Apres midi",
+		jour : '09',
 	}
-	funcStatut = (heure) =>{
-		if(heure <= 12){
-			return "Matinee"
-		}
-		else{
-			return "Soiree";
-		}
+
+	funcJour = (jour) =>{
+		let jourSemaine = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Samedi"];
+		return jourSemaine[jour];
 	}
+
 	funcMois = (mois) =>{
 		let moisAnnee = ["Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre"];
 		return moisAnnee[mois];
 	}
-	funcJour = (jour) => {
-		let jourSemaine = ["Lundi", "Mardi", "Mercredi", "Jeudi", "VEndredi", "Samedi", "Dimache"];
-		return jourSemaine[jour];
+	funcStatut = (heure) =>{
+		return (heure <= 12) ? "Matinee" : "Apres midi";
 	}
 
-	setMinute = (e) =>{
-		this.setState ({
-			minute : this.state.minute + e.target.value
-		})
+	funcModificationHeure = (myDate) =>{
+		myDate = myDate.target.value;
+		let date = myDate.split(":");
+		console.log(date[0])
+		this.timer = window.setInterval(() =>{
+			const time = new Date(date[0]+" "+date[1]);
+			this.setState({
+				minute : time.getMinutes(),
+				heure : time.getHours(),
+				seconde : time.getSeconds()
+			})
+		}, 1000)
 	}
-
+	
 	componentDidMount(){
 		this.timer = window.setInterval(() => {
 			const time = new Date()
@@ -42,123 +47,72 @@ class Horloge extends React.Component{
 				heure : time.getHours(),
 				minute : time.getMinutes(),
 				seconde : time.getSeconds(),
+				jourSemaine : this.funcJour(time.getDay()),
+				statut : this.funcStatut(time.getHours()),
+				mois : this.funcMois(time.getMonth()),
+				jour : time.getDate(),
+				annee : time.getFullYear()
 			})
-		})
+		},1000)
 	}
-
 	componentWillUnmount(){
 		clearInterval(this.timer)
 	}
 	render() {
 		return (
 			<div>
-				<div className="row mt-2 text-center">
-					<div className="col-md-12">
-						<button className="btn btn-success" onClick={this.funcDate}>Activer l'horloge</button>
-					</div>
-				</div>
-				<div className="row mt-1">
-					<div className="col-md-12">
-						<div className="card bg-success">
-							<div className="card-header">
-								<p className="lead text-uppercase"> {this.state.jour} </p>
-								<div className="text-uppercase"> {this.state.statut} </div>
-							</div>
-							<div className="card-body">
-								<h1 className="text-uppercase">{this.state.heure} : {this.state.minute} : {this.state.seconde}</h1> 
-							</div>
-							<div className="card-footer">
-								<p className="text-uppercase">{this.state.jourMois} {this.state.mois} {this.state.annee}</p>
-							</div>	
-						</div>	
-					</div>
-				</div>
-				
-				<div className="row mt-5">
-					<div className="col-md-12">
-						<h1 className="text-uppercase">Modification ici </h1>
-					</div>
-				</div>
-				<div className="row mt-3">
-					<div className="col-md-6">
-						<div className="row">
-							<div className="col-md-12">
-								<label>Nouvelle heure </label>
-							</div>
-						</div>
-						<div className="row">
-							<div className="col-md-12">
-								<input type="number" className="form-control" placeholder="Entrez la nouvelle heure que vous souhaitez"/>
+				<div className="container">
+					<div className="row">
+						<div className="col-md-4 mt-5 mr-auto ml-auto">
+							<div className="card">
+								<div className="card-header">
+									<h3 className="card-title">{this.state.jourSemaine}</h3>
+									<p>{this.state.statut}</p>
+								</div>
+								<div className="card-body">
+									<h1 className="h1 ">{this.state.heure} : {this.state.minute} : {this.state.seconde}</h1>
+								</div>
+								<div className="card-footer">
+									<p className="card-title">{this.state.jour} {this.state.mois} {this.state.annee}</p>
+								</div>
 							</div>
 						</div>
 					</div>
-					<div className="col-md-6">
-						<div className="row">
-							<div className="col-md-12">
-								<label>Nouvelle minute </label>
+					<div className="row">
+						<div className="col-md-4 mt-3 mr-auto ml-auto">
+							<div className="row py-2">
+								<div className="col-md-12">
+									<h1 className="lead">Modification ici</h1>
+								</div>
+							</div>
+							<div className="row">
+								<div className="col-md-6">
+									<div className="row">
+										<div className="col-md-12">
+											<label>Date</label>
+										</div>
+									</div>
+									<div className="row">
+										<div className="col-md-12">
+											<input type="date" className="form-control" />	
+										</div>
+									</div>
+								</div>
+								<div className="col-md-6">
+									<div className="row">
+										<div className="col-md-12">
+											<label>Heure</label>
+										</div>
+									</div>
+									<div className="row">
+										<div className="col-md-12">
+											<input type="time" className="form-control" onChange={this.funcModificationHeure}/>	
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
-						<div className="row">
-							<div className="col-md-12">
-								<input type="number" className="form-control" placeholder="Entrez la nouvelle minute que vous souhaitez" onChange = {this.setMinute} value = {this.state.minute}/>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div className="row mt-3">
-					<div className="col-md-4">
-						<div className="row">
-							<div className="col-md-12">
-								<label>Nouveau jour</label>
-							</div>
-						</div>
-						<div className="row">
-							<div className="col-md-12">
-								<select className="form-control">
-									<option>Lundi</option>
-									<option>Mardi</option>
-									<option>Mercredi</option>
-									<option>Jeudi</option>
-									<option>Vendredi</option>
-									<option>Samedi</option>
-									<option>Dimanche</option>
-								</select>
-							</div>
-						</div>
-					</div>
-					<div className="col-md-4">
-						<div className="row">
-							<div className="col-md-12">
-								<label>Nouveau mois</label>
-							</div>
-						</div>
-						<div className="row">
-							<div className="col-md-12">
-								<select className="form-control">
-									<option>Janvier</option>
-									<option>Fevrier</option>
-									<option>Mars</option>
-									<option>Avril</option>
-									<option>Mai</option>
-									<option>Juin</option>
-									<option>Juillet</option>
-								</select>
-							</div>
-						</div>
-					</div>
-					<div className="col-md-4">
-						<div className="row">
-							<div className="col-md-12">
-								<label>Nouvelle annee </label>
-							</div>
-						</div>
-						<div className="row">
-							<div className="col-md-12">
-								<input type="number" className="form-control" placeholder="Entrez la nouvelle minute que vous souhaitez"/>
-							</div>
-						</div>
-					</div>
+					</div>	
 				</div>
 			</div>
 		);
