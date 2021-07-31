@@ -2,20 +2,17 @@ import React from 'react';
 import './../css/bootstrap.min.css';
 
 class Horloge extends React.Component{
-	funcMois = (mois) =>{
-		let moisAnnee = ["Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre"];
-		return moisAnnee[mois];
+	funcJour = (jour) =>{
+		let jourDeLaSemaine = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+		return jourDeLaSemaine[jour]
 	}
-
+	funcMois = (mois) =>{
+		let moisAnnee = ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre'];
+		return moisAnnee[mois]
+	}
 	funcStatut = (heure) =>{
 		return (heure <= 12) ? "Matinee" : "Apres midi";
 	}
-
-	funcJour = (jour) =>{
-		let a = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Samedi"];
-		return a[jour];
-	}
-
 	state = {
 		heure : new Date().getHours(),
 		minute : new Date().getMinutes(),
@@ -24,38 +21,27 @@ class Horloge extends React.Component{
 		mois : this.funcMois(new Date().getMonth()),
 		annee : new Date().getFullYear(),
 		statut : this.funcStatut(new Date().getHours()),
-		jour : new Date().getDate(),
+		jour : new Date().getDate()
 	}
 
-	funcModification = () =>{
-		console.log("Je suis appele")
-		this.setState({
-			heure : '12',
-		})
-	}
-
-	funcMontage = () =>{
-		this.timer = setInterval(() => {
-			const time = new Date()
+	componentDidMount(){
+		this.timerID = setInterval(() => {
+			const time = new Date();
 			this.setState({
 				heure : time.getHours(),
 				minute : time.getMinutes(),
 				seconde : time.getSeconds(),
 				jourSemaine : this.funcJour(time.getDay()),
-				statut : this.funcStatut(time.getHours()),
 				mois : this.funcMois(time.getMonth()),
-				jour : time.getDate(),
-				annee : time.getFullYear()
+				annee : time.getFullYear(),
+				statut : this.funcStatut(time.getHours()),
+				jour : time.getDate()
 			})
-		},1000)
-	}
-	
-	componentDidMount(){
-		this.funcMontage();
+		}, 1000);
 	}
 
 	componentWillUnmount(){
-		clearInterval(this.timer)
+		clearInterval(this.timerID)
 	}
 	render() {
 		return (
@@ -84,39 +70,37 @@ class Horloge extends React.Component{
 									<h1 className="lead">Modification ici</h1>
 								</div>
 							</div>
-							<form>
-								<div className="row">
-									<div className="col-md-6">
-										<div className="row">
-											<div className="col-md-12">
-												<label>Date</label>
-											</div>
-										</div>
-										<div className="row">
-											<div className="col-md-12">
-												<input type="date" className="form-control" id="date"/>	
-											</div>
+							<div className="row">
+								<div className="col-md-6">
+									<div className="row">
+										<div className="col-md-12">
+											<label>Date</label>
 										</div>
 									</div>
-									<div className="col-md-6">
-										<div className="row">
-											<div className="col-md-12">
-												<label>Heure</label>
-											</div>
-										</div>
-										<div className="row">
-											<div className="col-md-12">
-												<input type="time" className="form-control" id="heure"/>	
-											</div>
+									<div className="row">
+										<div className="col-md-12">
+											<input type="date" className="form-control" />	
 										</div>
 									</div>
 								</div>
-								<div className="row mt-2">
-									<div className="col-md-12">
-										<button  className="btn btn-success" onClick={this.funcModification}>Appliquer</button>
+								<div className="col-md-6">
+									<div className="row">
+										<div className="col-md-12">
+											<label>Heure</label>
+										</div>
+									</div>
+									<div className="row">
+										<div className="col-md-12">
+											<input type="time" className="form-control" id="heure"/>	
+										</div>
 									</div>
 								</div>
-							</form>
+							</div>
+						</div>
+					</div>
+					<div className="row mt-3">
+						<div className="col-md-4 mt-3 mr-auto ml-auto">
+							<button className="btn btn-success">Valider</button>
 						</div>
 					</div>	
 				</div>
