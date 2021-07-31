@@ -2,46 +2,40 @@ import React from 'react';
 import './../css/bootstrap.min.css';
 
 class Horloge extends React.Component{
-	state = {
-		heure : '01',
-		minute : '00',
-		seconde : '00',
-		jourSemaine : "Lundi",
-		mois : "Janvier",
-		annee : 2020,
-		statut : "Apres midi",
-		jour : '09',
-	}
-
-	funcJour = (jour) =>{
-		let jourSemaine = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Samedi"];
-		return jourSemaine[jour];
-	}
-
 	funcMois = (mois) =>{
 		let moisAnnee = ["Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre"];
 		return moisAnnee[mois];
 	}
+
 	funcStatut = (heure) =>{
 		return (heure <= 12) ? "Matinee" : "Apres midi";
 	}
 
-	funcModificationHeure = (myDate) =>{
-		myDate = myDate.target.value;
-		let date = myDate.split(":");
-		console.log(date[0])
-		this.timer = window.setInterval(() =>{
-			const time = new Date(date[0]+" "+date[1]);
-			this.setState({
-				minute : time.getMinutes(),
-				heure : time.getHours(),
-				seconde : time.getSeconds()
-			})
-		}, 1000)
+	funcJour = (jour) =>{
+		let a = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Samedi"];
+		return a[jour];
 	}
-	
-	componentDidMount(){
-		this.timer = window.setInterval(() => {
+
+	state = {
+		heure : new Date().getHours(),
+		minute : new Date().getMinutes(),
+		seconde : new Date().getSeconds(),
+		jourSemaine : this.funcJour(new Date().getDay()),
+		mois : this.funcMois(new Date().getMonth()),
+		annee : new Date().getFullYear(),
+		statut : this.funcStatut(new Date().getHours()),
+		jour : new Date().getDate(),
+	}
+
+	funcModification = () =>{
+		console.log("Je suis appele")
+		this.setState({
+			heure : '12',
+		})
+	}
+
+	funcMontage = () =>{
+		this.timer = setInterval(() => {
 			const time = new Date()
 			this.setState({
 				heure : time.getHours(),
@@ -55,6 +49,11 @@ class Horloge extends React.Component{
 			})
 		},1000)
 	}
+	
+	componentDidMount(){
+		this.funcMontage();
+	}
+
 	componentWillUnmount(){
 		clearInterval(this.timer)
 	}
@@ -85,32 +84,39 @@ class Horloge extends React.Component{
 									<h1 className="lead">Modification ici</h1>
 								</div>
 							</div>
-							<div className="row">
-								<div className="col-md-6">
-									<div className="row">
-										<div className="col-md-12">
-											<label>Date</label>
+							<form>
+								<div className="row">
+									<div className="col-md-6">
+										<div className="row">
+											<div className="col-md-12">
+												<label>Date</label>
+											</div>
+										</div>
+										<div className="row">
+											<div className="col-md-12">
+												<input type="date" className="form-control" id="date"/>	
+											</div>
 										</div>
 									</div>
-									<div className="row">
-										<div className="col-md-12">
-											<input type="date" className="form-control" />	
+									<div className="col-md-6">
+										<div className="row">
+											<div className="col-md-12">
+												<label>Heure</label>
+											</div>
+										</div>
+										<div className="row">
+											<div className="col-md-12">
+												<input type="time" className="form-control" id="heure"/>	
+											</div>
 										</div>
 									</div>
 								</div>
-								<div className="col-md-6">
-									<div className="row">
-										<div className="col-md-12">
-											<label>Heure</label>
-										</div>
-									</div>
-									<div className="row">
-										<div className="col-md-12">
-											<input type="time" className="form-control" onChange={this.funcModificationHeure}/>	
-										</div>
+								<div className="row mt-2">
+									<div className="col-md-12">
+										<button  className="btn btn-success" onClick={this.funcModification}>Appliquer</button>
 									</div>
 								</div>
-							</div>
+							</form>
 						</div>
 					</div>	
 				</div>
